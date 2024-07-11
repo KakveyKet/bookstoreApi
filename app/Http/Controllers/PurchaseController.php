@@ -15,6 +15,7 @@ class PurchaseController extends Controller
                 return [
                     'id' => $purchase->id,
                     'user_name' => $purchase->user->name,
+                    'user_email' => $purchase->user->email,
                     'product_name' => $purchase->product->name,
                     'category_name' => $purchase->product->category->name,
                     'product_image' => $purchase->product->image_url, // Add this line for product image
