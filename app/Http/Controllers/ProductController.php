@@ -71,27 +71,34 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // Validate incoming request data
         $request->validate([
-            'name' => 'required|max:255',
-            'category_id' => 'required|exists:categories,id',
-            'price' => 'required|numeric',
+            'name' => 'sometimes|required|max:255',
+            'category_id' => 'sometimes|required|exists:categories,id',
+            'price' => 'sometimes|required|numeric',
             'image' => 'nullable|image|max:2048', // Allow image file, max size 2MB
-            'code' => 'required|max:255|unique:products,code,' . $id,
+            'code' => 'sometimes|required|max:255|unique:products,code,' . $id,
         ]);
 
         // Find the product by ID
         $product = Product::findOrFail($id);
 
-        // Update product fields based on incoming request data
-        $product->name = $request->input('name');
-        $product->category_id = $request->input('category_id');
-        $product->price = $request->input('price');
-        $product->code = $request->input('code');
+        // Update only the fields that are provided in the request
+        if ($request->has('name')) {
+            $product->name = $request->input('name');
+        }
+        if ($request->has('category_id')) {
+            $product->category_id = $request->input('category_id');
+        }
+        if ($request->has('price')) {
+            $product->price = $request->input('price');
+        }
+        if ($request->has('code')) {
+            $product->code = $request->input('code');
+        }
 
         // Handle image update if new image is uploaded
         if ($request->hasFile('image')) {
-            // Delete the old image if it existst
+            // Delete the old image if it exists
             if ($product->image) {
                 Storage::disk('public')->delete($product->image);
             }
@@ -106,6 +113,8 @@ class ProductController extends Controller
         // Return the updated product as JSON response
         return response()->json($product);
     }
+
+
     /**
      * Remove the specified product from storage.
      *

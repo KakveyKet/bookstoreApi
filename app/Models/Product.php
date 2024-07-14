@@ -14,6 +14,7 @@ class Product extends Model
         'name', 'category_id', 'price', 'image', 'code'
     ];
 
+
     // Relationships
     public function category()
     {
